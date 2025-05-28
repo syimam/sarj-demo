@@ -33,10 +33,10 @@ const DialogContext = React.createContext<{
   onOpenChange: (open: boolean) => void;
 }>({
   open: false,
-  onOpenChange: () => {},
+  onOpenChange: () => { },
 });
 
-const Dialog = ({ open = false, onOpenChange = () => {}, children }: DialogProps) => {
+const Dialog = ({ open = false, onOpenChange = () => { }, children }: DialogProps) => {
   return (
     <DialogContext.Provider value={{ open, onOpenChange }}>
       {children}
@@ -46,18 +46,19 @@ const Dialog = ({ open = false, onOpenChange = () => {}, children }: DialogProps
 
 const DialogTrigger = ({ asChild, children, ...props }: DialogTriggerProps) => {
   const { onOpenChange } = React.useContext(DialogContext);
-  
+
   const handleClick = () => {
     onOpenChange(true);
   };
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children, {
+    const child = children as React.ReactElement<{ onClick?: React.MouseEventHandler }>;
+
+    return React.cloneElement(child, {
       ...props,
       onClick: (e: React.MouseEvent<HTMLElement>) => {
-        if (React.isValidElement(children) && 
-            typeof children.props.onClick === 'function') {
-          children.props.onClick(e);
+        if (typeof child.props.onClick === 'function') {
+          child.props.onClick(e);
         }
         handleClick();
       },
@@ -78,8 +79,8 @@ const DialogContent = ({ className, children, ...props }: DialogContentProps) =>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div 
-        className="fixed inset-0 bg-black/50" 
+      <div
+        className="fixed inset-0 bg-black/50"
         onClick={() => onOpenChange(false)}
       />
       <div
