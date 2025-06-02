@@ -1,5 +1,5 @@
 import React from "react";
-import { Mic, Bot, Waveform, Headphones, Zap, Users } from "lucide-react";
+import { Mic, Bot, Headphones, Zap, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ export default function VoiceStudio() {
     {
       title: "Live Conversation AI",
       description: "Real-time conversational AI with voice interaction",
-      icon: Waveform,
+      icon: Bot,
       color: "text-green-600",
       bgColor: "bg-green-50",
       href: "/voice-studio/live-conversation",

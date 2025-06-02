@@ -66,10 +66,10 @@ export default function Dashboard() {
     { emotion: "Negative", count: 169, percentage: 9.2, color: "bg-black" }
   ];
 
-  const [selectedPeriod, setSelectedPeriod] = React.useState('daily');
-  const [tokenPeriod, setTokenPeriod] = React.useState('daily');
-  const [sentimentPeriod, setSentimentPeriod] = React.useState('daily');
-  const [agentsPeriod, setAgentsPeriod] = React.useState('daily');
+  const [selectedPeriod, setSelectedPeriod] = React.useState<'daily' | 'monthly' | 'yearly'>('daily');
+  const [tokenPeriod, setTokenPeriod] = React.useState<'daily' | 'monthly' | 'yearly'>('daily');
+  const [sentimentPeriod, setSentimentPeriod] = React.useState<'daily' | 'monthly' | 'yearly'>('daily');
+  const [agentsPeriod, setAgentsPeriod] = React.useState<'daily' | 'monthly' | 'yearly'>('daily');
 
   const callVolumeData = {
     daily: [
@@ -265,7 +265,7 @@ export default function Dashboard() {
                       Call Volume Analysis
                     </div>
                     <div className="flex bg-gray-50 rounded-lg p-1">
-                      {['daily', 'monthly', 'yearly'].map((period) => (
+                      {(['daily', 'monthly', 'yearly'] as const).map((period) => (
                         <button
                           key={period}
                           onClick={() => setSelectedPeriod(period)}
@@ -351,7 +351,7 @@ export default function Dashboard() {
                       Sentiment Distribution
                     </div>
                     <div className="flex bg-gray-50 rounded-lg p-1">
-                      {['daily', 'monthly', 'yearly'].map((period) => (
+                      {(['daily', 'monthly', 'yearly'] as const).map((period) => (
                         <button
                           key={period}
                           onClick={() => setSentimentPeriod(period)}
@@ -430,7 +430,7 @@ export default function Dashboard() {
                       Token Usage Analysis
                     </div>
                     <div className="flex bg-gray-50 rounded-lg p-1">
-                      {['daily', 'monthly', 'yearly'].map((period) => (
+                      {(['daily', 'monthly', 'yearly'] as const).map((period) => (
                         <button
                           key={period}
                           onClick={() => setTokenPeriod(period)}
@@ -517,7 +517,7 @@ export default function Dashboard() {
                       Top Performing Agents
                     </div>
                     <div className="flex bg-gray-50 rounded-lg p-1">
-                      {['daily', 'monthly', 'yearly'].map((period) => (
+                      {(['daily', 'monthly', 'yearly'] as const).map((period) => (
                         <button
                           key={period}
                           onClick={() => setAgentsPeriod(period)}

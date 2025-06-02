@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   TrendingUp,
   Calendar,
@@ -23,6 +25,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PageHeader } from "@/components/page-header";
 
 export default function Analytics() {
+  // State for select components
+  const [timeRange, setTimeRange] = useState("7d");
+  const [agentFilter, setAgentFilter] = useState("all");
+
   // Chart data (in real app, this would come from your analytics API)
   const callVolumeData = [
     { time: "00:00", calls: 45, tokens: 12000 },
@@ -72,7 +78,7 @@ export default function Analytics() {
             <CardContent className="p-4">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <Select defaultValue="7d">
+                  <Select value={timeRange} onValueChange={setTimeRange}>
                     <SelectTrigger className="w-32">
                       <SelectValue />
                     </SelectTrigger>
@@ -83,8 +89,8 @@ export default function Analytics() {
                       <SelectItem value="90d">Last 90 days</SelectItem>
                     </SelectContent>
                   </Select>
-                  
-                  <Select defaultValue="all">
+
+                  <Select value={agentFilter} onValueChange={setAgentFilter}>
                     <SelectTrigger className="w-40">
                       <SelectValue />
                     </SelectTrigger>
@@ -148,11 +154,11 @@ export default function Analytics() {
                   {callVolumeData.map((data, index) => (
                     <div key={index} className="flex flex-col items-center flex-1">
                       <div className="w-full bg-slate-100 rounded-t relative" style={{ height: '200px' }}>
-                        <div 
+                        <div
                           className="bg-blue-500 rounded-t absolute bottom-0 w-full"
                           style={{ height: `${(data.calls / 250) * 100}%` }}
                         />
-                        <div 
+                        <div
                           className="bg-green-500 rounded-t absolute bottom-0 w-1/2"
                           style={{ height: `${(data.tokens / 70000) * 100}%` }}
                         />
@@ -223,7 +229,7 @@ export default function Analytics() {
                       </div>
                     </div>
                     <div className="w-full bg-slate-100 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-green-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${agent.utilization}%` }}
                       />

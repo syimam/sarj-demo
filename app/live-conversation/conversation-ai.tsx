@@ -255,7 +255,7 @@ export function ConversationAI() {
           {/* Agent Selection */}
           <div className="space-y-2">
             <label className="text-sm font-medium">AI Agent</label>
-            <Select value={selectedAgent} onValueChange={setSelectedAgent} disabled={conversation.status === 'active'}>
+            <Select value={selectedAgent} onValueChange={setSelectedAgent} >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

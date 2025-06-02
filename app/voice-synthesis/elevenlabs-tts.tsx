@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Play, Pause, Volume2, Mic, Download, Waveform } from "lucide-react";
+import { Play, Pause, Volume2, Mic, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
@@ -103,7 +102,6 @@ export function VoiceSynthesis({ callId, scenario }: VoiceSynthesisProps) {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Waveform className="h-5 w-5 text-purple-500" />
           ElevenLabs Voice Synthesis
           {scenario && <Badge variant="outline">{scenario}</Badge>}
         </CardTitle>
@@ -112,13 +110,7 @@ export function VoiceSynthesis({ callId, scenario }: VoiceSynthesisProps) {
         {/* Text Input */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Text to Synthesize</label>
-          <Textarea
-            placeholder="Enter the text you want to convert to speech..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={4}
-            className="resize-none"
-          />
+      
           <div className="text-xs text-slate-500">
             {text.length} characters • {Math.ceil(text.length / 4)} estimated tokens
           </div>

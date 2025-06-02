@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Zap,
   TrendingUp,
@@ -23,6 +25,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PageHeader } from "@/components/page-header";
 
 export default function TokenDashboard() {
+  // State for select components
+  const [timeRange, setTimeRange] = useState<'7d' | '30d'>('7d');
+
   // Token usage data
   const tokenMetrics = [
     {
@@ -143,7 +148,7 @@ export default function TokenDashboard() {
           <Alert className="border-yellow-200 bg-yellow-50">
             <AlertTriangle className="h-4 w-4 text-yellow-600" />
             <AlertDescription className="text-yellow-800">
-              You've used 48% of your monthly token budget ($480.50 of $1,000). 
+              You've used 48% of your monthly token budget ($480.50 of $1,000).
               <Button variant="link" className="p-0 h-auto text-yellow-800 underline ml-1">
                 Adjust limits
               </Button>
@@ -158,7 +163,7 @@ export default function TokenDashboard() {
                   <div className="flex items-center justify-between mb-2">
                     <Zap className="h-4 w-4 text-yellow-500" />
                     <span className={`text-xs font-medium ${
-                      metric.changeType === 'positive' ? 'text-green-600' : 
+                      metric.changeType === 'positive' ? 'text-green-600' :
                       metric.changeType === 'negative' ? 'text-red-600' : 'text-slate-600'
                     }`}>
                       {metric.change}
@@ -182,7 +187,7 @@ export default function TokenDashboard() {
                     <BarChart3 className="h-5 w-5 mr-2 text-blue-500" />
                     Daily Token Usage
                   </div>
-                  <Select defaultValue="7d">
+                  <Select>
                     <SelectTrigger className="w-24">
                       <SelectValue />
                     </SelectTrigger>
@@ -198,7 +203,7 @@ export default function TokenDashboard() {
                   {dailyUsage.map((day, index) => (
                     <div key={index} className="flex flex-col items-center flex-1">
                       <div className="w-full bg-slate-100 rounded-t relative" style={{ height: '160px' }}>
-                        <div 
+                        <div
                           className="bg-blue-500 rounded-t absolute bottom-0 w-full"
                           style={{ height: `${(day.tokens / 450000) * 100}%` }}
                         />
@@ -231,7 +236,7 @@ export default function TokenDashboard() {
                         </div>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-purple-500 h-2 rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
