@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import { Sidebar } from "./sidebar";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
+import { LoadingProvider } from "./loading-provider";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,7 +16,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden w-full">
+    <LoadingProvider>
+      <div className="flex h-screen bg-gray-50 overflow-hidden w-full">
       {/* Mobile sidebar overlay */}
       <div className={`
         fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden
@@ -41,12 +43,12 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Mobile menu button - only visible on mobile when sidebar is closed */}
-        <div className="lg:hidden bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-2">
+        <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSidebarOpen(true)}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 text-gray-700 hover:text-[#674ea7]"
           >
             <Menu className="h-5 w-5" />
             <span className="text-sm font-medium">Menu</span>
@@ -54,10 +56,11 @@ export function MainLayout({ children }: MainLayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-900">
+        <main className="flex-1 overflow-auto bg-gray-50">
           {children}
         </main>
       </div>
     </div>
+    </LoadingProvider>
   );
 }

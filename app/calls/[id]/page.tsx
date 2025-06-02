@@ -1,18 +1,12 @@
-"use client";
-
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
-  Phone,
   Clock,
   Globe,
   Settings,
   ChevronRight,
   ArrowDownLeft,
   ArrowUpRight,
-  Copy,
-  CheckCircle,
-  Minus,
   Bot,
   Headphones,
   Code,
@@ -28,11 +22,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DisplayLocalTime } from "../display-local-time";
 import { TranscriptChat } from "./transcript-chat";
 import { AudioPlayer } from "./audio-player";
+import { ScenarioBadge } from "../scenario-badge";
+import { StatusBadge } from "../status-badge";
+// import { CopyableText, CopyButton, PhoneCopyButton } from "./call-details-client";
+import { AccordionCard } from "./accordion-card";
 
 // Sample call data with multiple calls
-const getSampleCallDetails = async (id: string) => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 100));
+const getSampleCallDetails = (id: string) => {
+  // No need for async since this is just sample data
 
   const sampleCalls = {
     "call_123456789": {
@@ -441,38 +438,13 @@ const formatDuration = (seconds: number | null) => {
   return `${mins}m ${secs}s`;
 };
 
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    console.error('Failed to copy text: ', err);
-  }
-};
-
-const CopyableText = ({ text, label }: { text: string; label: string }) => (
-  <div className="group flex items-center justify-between">
-    <div>
-      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">{label}</p>
-      <p className="font-mono text-sm text-slate-900 dark:text-slate-100">{text}</p>
-    </div>
-    <Button
-      variant="ghost"
-      size="sm"
-      className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
-      onClick={() => copyToClipboard(text)}
-    >
-      <Copy className="h-3 w-3" />
-    </Button>
-  </div>
-);
-
 interface CallDetailsPageProps {
   params: Promise<{ id: string }>;
 }
 
 export default async function CallDetailsPage({ params }: CallDetailsPageProps) {
   const { id } = await params;
-  const call = await getSampleCallDetails(id);
+  const call = getSampleCallDetails(id);
 
   if (!call) {
     notFound();
@@ -481,97 +453,181 @@ export default async function CallDetailsPage({ params }: CallDetailsPageProps) 
   return (
     <div className="h-full max-h-screen w-full flex flex-col overflow-hidden">
       {/* Compact Navigation Bar */}
-      <div className="flex-shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 lg:px-6 py-3">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/calls">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Calls
-            </Link>
-          </Button>
+      <div className="flex-shrink-0 border-b border-gray-200 bg-white px-4 lg:px-6 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="sm" asChild className="text-gray-600 hover:text-[#674ea7]">
+              <Link href="/calls">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Calls
+              </Link>
+            </Button>
 
-          {/* Breadcrumb */}
-          <nav className="flex items-center space-x-1 text-sm text-slate-500 dark:text-slate-400">
-            <Link href="/" className="hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
-              Operations
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/calls" className="hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
-              Calls
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-slate-900 dark:text-slate-100 font-medium">Details</span>
-          </nav>
+            {/* Breadcrumb */}
+            <nav className="hidden md:flex items-center space-x-1 text-sm text-gray-500">
+              <Link href="/" className="hover:text-[#674ea7] transition-colors">
+                Operations
+              </Link>
+              <ChevronRight className="h-4 w-4" />
+              <Link href="/calls" className="hover:text-[#674ea7] transition-colors">
+                Calls
+              </Link>
+              <ChevronRight className="h-4 w-4" />
+              <span className="text-gray-900 font-medium">Details</span>
+            </nav>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" className="border-gray-200 text-gray-600 hover:text-[#674ea7] hover:border-[#674ea7]">
+              <Headphones className="h-4 w-4 mr-2" />
+              Listen
+            </Button>
+            <Button variant="outline" size="sm" className="border-gray-200 text-gray-600 hover:text-[#674ea7] hover:border-[#674ea7]">
+              <Code className="h-4 w-4 mr-2" />
+              API
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 min-h-0 p-4 lg:p-6 space-y-3">
-
-        {/* Section 1: Call Overview (Top Summary) */}
-        <Card>
-          <CardContent className="p-3">
-            <div className="flex flex-wrap items-center gap-4">
-              {/* Caller Avatar/Icon */}
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                  <Phone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="font-semibold text-slate-900 dark:text-slate-100">{call.phoneNumber}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Caller</p>
-                </div>
-              </div>
-
-              {/* Status Chips with Labels */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex flex-col items-center space-y-0.5">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Status</p>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400">
-                      {call.status === 'completed' ? 'Completed' : call.status}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-center space-y-0.5">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Direction</p>
-                  <div className="flex items-center space-x-2">
+      <div className="flex-1 min-h-0 p-4 lg:p-6 space-y-4 overflow-auto bg-gray-50">
+        {/* Call Overview Card */}
+        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-4 md:p-6">
+            <div className="space-y-6">
+              {/* Top Row: Call Header */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {/* Left: Call Info */}
+                <div className="flex items-start space-x-4">
+                  <div className={`p-3 rounded-full ${call.direction === 'inbound' ? 'bg-[#674ea7]/10' : 'bg-emerald-100'}`}>
                     {call.direction === 'inbound' ? (
-                      <ArrowDownLeft className="h-4 w-4 text-blue-600" />
+                      <ArrowDownLeft className="h-5 w-5 text-[#674ea7]" />
                     ) : (
-                      <ArrowUpRight className="h-4 w-4 text-emerald-600" />
+                      <ArrowUpRight className="h-5 w-5 text-emerald-600" />
                     )}
-                    <Badge variant={call.direction === 'inbound' ? 'default' : 'secondary'}>
-                      {call.direction === 'inbound' ? 'Inbound' : 'Outbound'}
-                    </Badge>
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                      {call.phoneNumber}
+                      {/* <PhoneCopyButton phoneNumber={call.phoneNumber} /> */}
+                    </h2>
+                    <div className="flex items-center mt-1 space-x-2">
+                      <Badge variant={call.direction === 'inbound' ? 'default' : 'secondary'} className="capitalize bg-[#674ea7]/10 text-[#674ea7] border-[#674ea7]/20">
+                        {call.direction}
+                      </Badge>
+                      <ScenarioBadge scenario={call.scenario} />
+                      <StatusBadge status={call.status} />
+                    </div>
+                    <p className="text-sm text-gray-500 mt-2">
+                      <DisplayLocalTime date={call.startedAt} />
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center space-y-0.5">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Duration</p>
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-slate-500" />
-                    <span className="font-medium text-slate-900 dark:text-slate-100">
+                {/* Right: Quick Stats */}
+                <div className="flex flex-wrap gap-4 md:gap-6">
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs text-gray-500 uppercase tracking-wide">Duration</span>
+                    <span className="text-lg font-bold text-gray-900 flex items-center">
+                      <Clock className="h-4 w-4 mr-1 text-[#674ea7]" />
                       {formatDuration(call.totalDuration)}
                     </span>
                   </div>
-                </div>
 
-                <div className="flex flex-col items-center space-y-0.5">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Language</p>
-                  <div className="flex items-center space-x-2">
-                    <Globe className="h-4 w-4 text-slate-500" />
-                    <span className="text-slate-700 dark:text-slate-300">{call.language}</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs text-gray-500 uppercase tracking-wide">Language</span>
+                    <span className="text-lg font-bold text-gray-900 flex items-center">
+                      <Globe className="h-4 w-4 mr-1 text-[#674ea7]" />
+                      {call.language}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs text-gray-500 uppercase tracking-wide">Messages</span>
+                    <span className="text-lg font-bold text-gray-900 flex items-center">
+                      <MessageSquare className="h-4 w-4 mr-1 text-[#674ea7]" />
+                      {call.transcript.length}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Row: Details Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Voice Analysis */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Bot className="h-4 w-4 mr-2 text-[#674ea7]" />
+                      <span className="text-sm font-medium text-gray-700">Voice Analysis</span>
+                    </div>
+                    <Button variant="outline" size="sm" className="text-xs h-7 border-gray-200 text-gray-600 hover:text-[#674ea7] hover:border-[#674ea7]">
+                      Generate Clone
+                    </Button>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Sentiment</span>
+                      <span className="font-medium text-green-600">Positive</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Emotion</span>
+                      <span className="font-medium text-gray-900">Satisfied</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Speech Rate</span>
+                      <span className="font-medium text-gray-900">Normal</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Clarity</span>
+                      <span className="font-medium text-gray-900">95%</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center space-y-0.5">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Scenario</p>
-                  <Badge variant="outline" className="capitalize">
-                    {call.scenario.replace(/-/g, ' ')}
-                  </Badge>
+                {/* Call Metadata */}
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <Settings className="h-4 w-4 mr-2 text-[#674ea7]" />
+                    <span className="text-sm font-medium text-gray-700">Call Metadata</span>
+                  </div>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Call ID</p>
+                      <p className="text-sm text-gray-900 font-medium font-mono">{call.id}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">User ID</p>
+                      <p className="text-sm text-gray-900 font-medium font-mono">{call.userId}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">SIP Trunk ID</p>
+                      <p className="text-sm text-gray-900 font-medium font-mono">{call.sipTrunkId}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timestamps */}
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 mr-2 text-[#674ea7]" />
+                    <span className="text-sm font-medium text-gray-700">Call Timeline</span>
+                  </div>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Started At</p>
+                      <p className="text-sm text-gray-900 font-medium" title={call.startedAt}>
+                        <DisplayLocalTime date={call.startedAt} />
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Ended At</p>
+                      <p className="text-sm text-gray-900 font-medium" title={call.endedAt}>
+                        <DisplayLocalTime date={call.endedAt} />
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -579,43 +635,43 @@ export default async function CallDetailsPage({ params }: CallDetailsPageProps) 
         </Card>
 
         {/* Main Two-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full min-h-0">
-
-          {/* Section 2: Transcript (Left Column - Main Content) */}
-          <div className="lg:col-span-2 flex flex-col min-h-0">
-            {/* AI Conversation */}
-            <Card className="h-[500px] flex flex-col">
-              <CardHeader className="pb-2 flex-shrink-0">
-                <CardTitle className="text-sm flex items-center">
-                  <Bot className="h-4 w-4 mr-2" />
-                  AI Conversation
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Left Column - Transcript */}
+          <div className="lg:col-span-2">
+            <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm h-[500px] flex flex-col">
+              <CardHeader className="pb-0 pt-4 px-4 md:px-6 flex-shrink-0 border-b border-gray-100">
+                <CardTitle className="text-base flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Bot className="h-4 w-4 mr-2 text-[#674ea7]" />
+                    Conversation Transcript
+                  </div>
+                  {/* <CopyButton text={JSON.stringify(call.transcript)} size="default" /> */}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-0 flex-1 overflow-hidden">
-                <div className="h-full overflow-auto">
+              <CardContent className="p-0 flex-1 overflow-hidden">
+                <div className="h-full overflow-auto p-4 md:p-6">
                   <TranscriptChat transcript={call.transcript} />
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Section 3: Metadata & Audio (Right Column) */}
-          <div className="lg:col-span-1 space-y-3">
-
-            {/* Call Recording Player */}
-            <Card>
-              <CardHeader className="pb-1">
-                <CardTitle className="text-sm flex items-center justify-between">
+          {/* Right Column - Audio & Data */}
+          <div className="space-y-4">
+            {/* Audio Player */}
+            <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-0 pt-4 px-4 md:px-6 flex-shrink-0">
+                <CardTitle className="text-base flex items-center justify-between">
                   <div className="flex items-center">
-                    <Headphones className="h-4 w-4 mr-2" />
-                    Recording
+                    <Headphones className="h-4 w-4 mr-2 text-[#674ea7]" />
+                    Call Recording
                   </div>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs border-[#674ea7]/20 text-[#674ea7]">
                     {formatDuration(call.totalDuration)}
                   </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-0 pb-2">
+              <CardContent className="p-4 md:p-6">
                 <AudioPlayer
                   audioUrl={call.audioUrl}
                   duration={call.totalDuration}
@@ -624,125 +680,21 @@ export default async function CallDetailsPage({ params }: CallDetailsPageProps) 
               </CardContent>
             </Card>
 
-            {/* Call Metadata */}
-            <Card className="h-fit">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Call Metadata
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 pt-0">
-                <CopyableText text={call.phoneNumber} label="Phone Number" />
-                <CopyableText text={call.userId} label="User ID" />
-
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Started At</p>
-                  <p className="text-sm text-slate-900 dark:text-slate-100" title={call.startedAt}>
-                    <DisplayLocalTime date={call.startedAt} />
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Ended At</p>
-                  <p className="text-sm text-slate-900 dark:text-slate-100" title={call.endedAt}>
-                    <DisplayLocalTime date={call.endedAt} />
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">SIP Status</p>
-                  <div className="flex items-center space-x-2">
-                    {call.sipStatus ? (
-                      <>
-                        <CheckCircle className="h-3 w-3 text-green-600" />
-                        <span className="text-sm text-slate-900 dark:text-slate-100 capitalize">
-                          {call.sipStatus.replace(/_/g, ' ')}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Minus className="h-3 w-3 text-slate-400" />
-                        <span className="text-sm text-slate-500">-</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <CopyableText text={call.sipTrunkId} label="SIP Trunk ID" />
-
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Webhook Status</p>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-3 w-3 text-green-600" />
-                    <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400 text-xs">
-                      Success
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Response Data Accordion */}
+            <AccordionCard
+              title="Response Data"
+              icon={<Code className="h-4 w-4 text-[#674ea7]" />}
+              copyText={JSON.stringify(call.responseBody)}
+              defaultOpen={false}
+            >
+              <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-auto">
+                <pre className="text-xs text-gray-800 font-mono whitespace-pre-wrap">
+                  {JSON.stringify(call.responseBody, null, 2)}
+                </pre>
+              </div>
+            </AccordionCard>
           </div>
         </div>
-
-        {/* Section 4: Media + Payload (Bottom Tabs) */}
-        <Card>
-          <CardContent className="p-0">
-            <Tabs defaultValue="recording" className="w-full">
-              <div className="border-b border-slate-200 dark:border-slate-700 px-6 pt-6">
-                <TabsList className="grid w-full max-w-md grid-cols-3">
-                  <TabsTrigger value="transcript" className="flex items-center space-x-2">
-                    <MessageSquare className="h-4 w-4" />
-                    <span>Transcript</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="recording" className="flex items-center space-x-2">
-                    <Headphones className="h-4 w-4" />
-                    <span>Recording</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="webhook" className="flex items-center space-x-2">
-                    <Code className="h-4 w-4" />
-                    <span>Webhook</span>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              <div className="p-6">
-                <TabsContent value="transcript" className="mt-0">
-                  <div className="space-y-4">
-                    <h3 className="font-medium text-slate-900 dark:text-slate-100">Full Transcript</h3>
-                    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 max-h-64 overflow-auto">
-                      <TranscriptChat transcript={call.transcript} />
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="recording" className="mt-0">
-                  <div className="space-y-4">
-                    <h3 className="font-medium text-slate-900 dark:text-slate-100">Audio Recording</h3>
-                    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-6">
-                      <AudioPlayer
-                        audioUrl={call.audioUrl}
-                        duration={call.totalDuration}
-                        title={`Call ${call.id}`}
-                      />
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="webhook" className="mt-0">
-                  <div className="space-y-4">
-                    <h3 className="font-medium text-slate-900 dark:text-slate-100">Webhook Payload</h3>
-                    <div className="bg-slate-900 dark:bg-slate-950 rounded-lg p-4 max-h-64 overflow-auto">
-                      <pre className="text-sm text-green-400 font-mono">
-                        {JSON.stringify(call.responseBody, null, 2)}
-                      </pre>
-                    </div>
-                  </div>
-                </TabsContent>
-              </div>
-            </Tabs>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

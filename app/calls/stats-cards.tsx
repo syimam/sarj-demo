@@ -43,72 +43,60 @@ export function StatsCards({ calls }: StatsCardsProps) {
 
   const stats = [
     {
-      title: "Average Call Duration",
+      label: "Avg Duration",
       value: formatDuration(Math.round(averageDuration)),
       icon: Clock,
-      description: "Avg time per completed call",
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      change: "Per call"
     },
     {
-      title: "Total Calls Today",
+      label: "Today's Calls",
       value: totalCallsToday.toString(),
       icon: Phone,
-      description: "Calls made today",
-      color: "text-green-600",
-      bgColor: "bg-green-50",
+      change: "+12% vs yesterday"
     },
     {
-      title: "Success Rate",
+      label: "Success Rate",
       value: `${successRate.toFixed(1)}%`,
       icon: TrendingUp,
-      description: "Completed calls ratio",
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-50",
+      change: "+2.3% this week"
     },
     {
-      title: "Total Calls",
+      label: "Total Calls",
       value: calls.length.toString(),
       icon: CheckCircle,
-      description: "All time calls",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      change: "All time"
     },
     {
-      title: "Active Calls",
+      label: "Active Calls",
       value: activeCalls.toString(),
       icon: Activity,
-      description: "Currently in progress",
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
+      change: "In progress"
     },
     {
-      title: "Failed Calls",
+      label: "Failed Calls",
       value: failedCalls.toString(),
       icon: AlertCircle,
-      description: "Failed or timed out",
-      color: "text-red-600",
-      bgColor: "bg-red-50",
+      change: "Need attention"
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
-      {stats.map((stat) => {
-        const Icon = stat.icon;
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      {stats.map((stat, index) => {
+        const IconComponent = stat.icon;
         return (
-          <Card key={stat.title} className="hover:shadow-md transition-shadow dark:bg-slate-800 dark:border-slate-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-3">
-              <CardTitle className="text-xs font-medium text-slate-600 dark:text-slate-400 leading-tight">
-                {stat.title}
-              </CardTitle>
-              <div className={`p-1 rounded-md ${stat.bgColor} dark:bg-opacity-20`}>
-                <Icon className={`h-3 w-3 ${stat.color} dark:opacity-80`} />
+          <Card key={index} className="border-0 shadow-sm bg-white/80 backdrop-blur-sm hover:shadow-md transition-all">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="p-2 bg-[#674ea7]/10 rounded-lg">
+                  <IconComponent className="h-4 w-4 text-[#674ea7]" />
+                </div>
+                <span className="text-xs font-light text-[#674ea7] bg-[#674ea7]/5 px-2 py-1 rounded">
+                  {stat.change}
+                </span>
               </div>
-            </CardHeader>
-            <CardContent className="px-3 pb-3">
-              <div className="text-lg font-bold text-slate-900 dark:text-slate-100">{stat.value}</div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{stat.description}</p>
+              <div className="text-lg font-semibold text-gray-900 mb-1">{stat.value}</div>
+              <div className="text-xs font-light text-gray-500">{stat.label}</div>
             </CardContent>
           </Card>
         );

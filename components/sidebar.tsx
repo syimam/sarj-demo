@@ -16,13 +16,30 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  BarChart3,
+  Home,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
+import { useLoading } from "./loading-provider";
 
 const navigation = [
+  {
+    name: "Home",
+    href: "/",
+    icon: Home,
+  },
+  {
+    type: "section",
+    name: "Dashboard",
+  },
+  {
+    name: "Overview",
+    href: "/dashboard",
+    icon: BarChart3,
+  },
   {
     type: "section",
     name: "Operations",
@@ -90,19 +107,26 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const { startPageTransition } = useLoading();
+
+  const handleNavigation = (href: string) => {
+    if (pathname !== href) {
+      startPageTransition();
+    }
+  };
 
   return (
-    <div className="flex h-full w-full flex-col bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 shadow-lg lg:shadow-none">
+    <div className="flex h-full w-full flex-col bg-white border-r border-gray-200 shadow-lg lg:shadow-none">
       {/* Logo/Brand */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
         <div className="flex items-center space-x-3 min-w-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex-shrink-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#674ea7] flex-shrink-0">
             <Bot className="h-5 w-5 text-white" />
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100 truncate">sarj.ai</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">AI Call Management</p>
+              <h1 className="text-lg font-bold text-gray-900 truncate">sarj.ai</h1>
+              <p className="text-xs text-gray-500 truncate">AI Call Management</p>
             </div>
           )}
         </div>
@@ -111,7 +135,7 @@ export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: Sideba
         <Button
           variant="ghost"
           size="sm"
-          className="lg:hidden"
+          className="lg:hidden text-gray-500 hover:text-[#674ea7]"
           onClick={onClose}
         >
           <X className="h-5 w-5" />
@@ -125,13 +149,13 @@ export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: Sideba
             if (collapsed) {
               return (
                 <div key={item.name} className={cn("mb-2", index > 0 && "mt-6")}>
-                  <div className="h-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+                  <div className="h-px bg-gray-200 mx-2"></div>
                 </div>
               );
             }
             return (
               <div key={item.name} className={cn("mb-2", index > 0 && "mt-6")}>
-                <h3 className="px-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   {item.name}
                 </h3>
               </div>
@@ -146,12 +170,13 @@ export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: Sideba
               key={item.name}
               href={item.href!}
               title={collapsed ? item.name : undefined}
+              onClick={() => handleNavigation(item.href!)}
               className={cn(
                 "group flex items-center rounded-lg text-sm font-medium transition-colors mb-1 relative",
                 collapsed ? "px-3 py-3 justify-center" : "px-3 py-2",
                 isActive
-                  ? "bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
-                  : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
+                  ? "bg-[#674ea7]/10 text-[#674ea7] border border-[#674ea7]/20"
+                  : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
               )}
             >
               <Icon
@@ -159,8 +184,8 @@ export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: Sideba
                   "h-4 w-4 flex-shrink-0",
                   collapsed ? "mr-0" : "mr-3",
                   isActive
-                    ? "text-blue-600 dark:text-blue-400"
-                    : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
+                    ? "text-[#674ea7]"
+                    : "text-gray-400 group-hover:text-gray-600"
                 )}
               />
               {!collapsed && (
@@ -169,7 +194,7 @@ export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: Sideba
 
               {/* Tooltip for collapsed state */}
               {collapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 dark:bg-slate-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
                   {item.name}
                 </div>
               )}
@@ -179,20 +204,20 @@ export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: Sideba
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-slate-200 dark:border-slate-700">
+      <div className="border-t border-gray-200">
         {/* User Info */}
         <div className="p-4">
           <div className={cn(
             "flex items-center",
             collapsed ? "justify-center" : "space-x-3"
           )}>
-            <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">AD</span>
+            <div className="h-8 w-8 rounded-full bg-[#674ea7]/10 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-medium text-[#674ea7]">AD</span>
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">Admin User</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">admin@sarj.ai</p>
+                <p className="text-sm font-medium text-gray-900 truncate">Admin User</p>
+                <p className="text-xs text-gray-500 truncate">admin@sarj.ai</p>
               </div>
             )}
             {!collapsed && (
@@ -208,12 +233,12 @@ export function Sidebar({ collapsed = false, onToggleCollapse, onClose }: Sideba
 
         {/* Desktop collapse toggle at bottom */}
         {onToggleCollapse && (
-          <div className="border-t border-slate-200 dark:border-slate-700 p-2 hidden lg:block">
+          <div className="border-t border-gray-200 p-2 hidden lg:block">
             <Button
               variant="ghost"
               size="sm"
               onClick={onToggleCollapse}
-              className="w-full flex items-center justify-center h-8 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+              className="w-full flex items-center justify-center h-8 text-gray-500 hover:text-[#674ea7] hover:bg-gray-50"
             >
               {collapsed ? (
                 <ChevronRight className="h-4 w-4" />
